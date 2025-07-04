@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\ContactForm;
+use App\Models\ContactForm as ModelsContactForm;
 
 class ContactFormController extends Controller
 {
@@ -11,8 +13,18 @@ class ContactFormController extends Controller
      */
     public function index()
     {
-        //
-        return view('contacts.index');
+        //DBから情報を取得
+        $contacts = ContactForm::select('id', 'name', 'title', 'gender', 'created_at')->get();
+        //genderの値と表示名を結び付け
+        // if ($contacts->gender === 0) {
+        //     $gender = '男性';
+        // } else {
+        //     $gender = '女性';
+        // }
+
+        //処理:contactsフォルダ内のindex.blade.phpを返す。
+        //view
+        return view('contacts.index', compact('contacts'));
     }
 
     /**
@@ -30,6 +42,19 @@ class ContactFormController extends Controller
     public function store(Request $request)
     {
         //
+        // dd($request->name);
+        ContactForm::create([
+            'name' => $request->name,
+            'title' => $request->title,
+            'email' => $request->email,
+            'url' => $request->url,
+            'gender' => $request->gender,
+            'age' => $request->age,
+            'contact' => $request->contact,
+
+        ]);
+        //index ページニリダイレクト
+        return to_route('contacts.index');
     }
 
     /**

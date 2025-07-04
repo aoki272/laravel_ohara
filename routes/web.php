@@ -19,6 +19,7 @@ Route::prefix('contacts') // 頭に contacts をつける
     ->group(function () { // グループ化 
         Route::get('/', 'index')->name('index'); // 名前つきルート
         Route::get('/create', 'create')->name('create'); // 名前つきルート
+        Route::post('/', 'store')->name('store');
     });
 
 
