@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\ContactForm;
 use App\Models\ContactForm as ModelsContactForm;
+use App\Services;
+use App\Services\CheckFormService;
+use App\Http\Requests\StoreContactRequest; //自作のリクエストインポート
 
 class ContactFormController extends Controller
 {
@@ -39,9 +42,8 @@ class ContactFormController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreContactRequest $request)
     {
-        //
         // dd($request->name);
         ContactForm::create([
             'name' => $request->name,
@@ -66,12 +68,13 @@ class ContactFormController extends Controller
         // findOrFail ⇒１件データを取得。データが存在しない場合404
         $contact = ContactForm::findOrFail($id);
 
-        //性別の表記処理
-        if ($contact->gender === 0) {
-            $gender = '男性';
-        } else {
-            $gender = '女性';
-        }
+        // //性別の表記処理
+        // if ($contact->gender === 0) {
+        //     $gender = '男性';
+        // } else {
+        //     $gender = '女性';
+        // }
+        CheckFormService::checkGender($contact);
         return view('contacts.show', compact('contact', 'gender'));
     }
 
@@ -82,11 +85,12 @@ class ContactFormController extends Controller
     {
         //DBから一軒だけデータを取得。
         $contact = ContactForm::findOrFail($id);
-        if ($contact->gender === 0) {
-            $gender = '男性';
-        } else {
-            $gender = '女性';
-        }
+        // if ($contact->gender === 0) {
+        //     $gender = '男性';
+        // } else {
+        //     $gender = '女性';
+        // }
+        CheckFormService::checkGender($contact);
         return view('contacts.edit', compact('contact', 'gender'));
     }
 
@@ -118,5 +122,9 @@ class ContactFormController extends Controller
     public function destroy(string $id)
     {
         //
+        $contact = ContactForm::findOrFail($id);
+        $contact->delete();
+
+        return to_route('contacts.index');
     }
 }
